@@ -9,3 +9,7 @@ forest.jpg
 
 lecture
 lecture/
+
+.DS_Store
+.vscode/
+*.pyc

@@ -4,8 +4,8 @@ import torch
 from IPython.display import HTML, display
 
 
-def set_default(figsize=(10, 10), dpi=100):
-    plt.style.use(['dark_background', 'bmh'])
+def set_default(figsize=(5, 5), dpi=100):
+    plt.style.use(['bmh'])
     plt.rc('axes', facecolor='k')
     plt.rc('figure', facecolor='k')
     plt.rc('figure', figsize=figsize, dpi=dpi)
@@ -14,10 +14,12 @@ def set_default(figsize=(10, 10), dpi=100):
 def plot_data(X, y, d=0, auto=False, zoom=1):
     X = X.cpu()
     y = y.cpu()
-    plt.scatter(X.numpy()[:, 0], X.numpy()[:, 1], c=y, s=20, cmap=plt.cm.Spectral)
+    plt.scatter(X.numpy()[:, 0], X.numpy()[:, 1],
+                c=y, s=20, cmap=plt.cm.Spectral)
     plt.axis('square')
     plt.axis(np.array((-1.1, 1.1, -1.1, 1.1)) * zoom)
-    if auto is True: plt.axis('equal')
+    if auto is True:
+        plt.axis('equal')
     plt.axis('off')
 
     _m, _c = 0, '.15'
@@ -30,7 +32,8 @@ def plot_model(X, y, model):
     mesh = np.arange(-1.1, 1.1, 0.01)
     xx, yy = np.meshgrid(mesh, mesh)
     with torch.no_grad():
-        data = torch.from_numpy(np.vstack((xx.reshape(-1), yy.reshape(-1))).T).float()
+        data = torch.from_numpy(
+            np.vstack((xx.reshape(-1), yy.reshape(-1))).T).float()
         Z = model(data).detach()
     Z = np.argmax(Z, axis=1).reshape(xx.shape)
     plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral, alpha=0.3)
@@ -51,14 +54,16 @@ def show_scatterplot(X, colors, title=''):
 def plot_bases(bases, width=0.04):
     bases = bases.cpu()
     bases[2:] -= bases[:2]
-    plt.arrow(*bases[0], *bases[2], width=width, color=(1,0,0), zorder=10, alpha=1., length_includes_head=True)
-    plt.arrow(*bases[1], *bases[3], width=width, color=(0,1,0), zorder=10, alpha=1., length_includes_head=True)
+    plt.arrow(*bases[0], *bases[2], width=width, color=(1, 0, 0),
+              zorder=10, alpha=1., length_includes_head=True)
+    plt.arrow(*bases[1], *bases[3], width=width, color=(0, 1, 0),
+              zorder=10, alpha=1., length_includes_head=True)
 
 
 def show_mat(mat, vect, prod, threshold=-1):
     # Subplot grid definition
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=False, sharey=True,
-                                        gridspec_kw={'width_ratios':[5,1,1]})
+                                        gridspec_kw={'width_ratios': [5, 1, 1]})
     # Plot matrices
     cax1 = ax1.matshow(mat.numpy(), clim=(-1, 1))
     ax2.matshow(vect.numpy(), clim=(-1, 1))
@@ -72,7 +77,7 @@ def show_mat(mat, vect, prod, threshold=-1):
     # Remove xticks for vectors
     ax2.set_xticks(tuple())
     ax3.set_xticks(tuple())
-    
+
     # Plot colourbars
     fig.colorbar(cax1, ax=ax2)
     fig.colorbar(cax3, ax=ax3)
@@ -104,18 +109,24 @@ def _cstr(s, color='black'):
         return f'<text style=color:#000;background-color:{color}>{s} </text>'
 
 # print html
+
+
 def _print_color(t):
     display(HTML(''.join([_cstr(ti, color=ci) for ti, ci in t])))
 
 # get appropriate color for value
+
+
 def _get_clr(value):
     colors = ('#85c2e1', '#89c4e2', '#95cae5', '#99cce6', '#a1d0e8',
               '#b2d9ec', '#baddee', '#c2e1f0', '#eff7fb', '#f9e8e8',
               '#f9e8e8', '#f9d4d4', '#f9bdbd', '#f8a8a8', '#f68f8f',
               '#f47676', '#f45f5f', '#f34343', '#f33b3b', '#f42e2e')
     value = int((value * 100) / 5)
-    if value == len(colors): value -= 1  # fixing bugs...
+    if value == len(colors):
+        value -= 1  # fixing bugs...
     return colors[value]
+
 
 def _visualise_values(output_values, result_list):
     text_colours = []
@@ -123,6 +134,7 @@ def _visualise_values(output_values, result_list):
         text = (result_list[i], _get_clr(output_values[i]))
         text_colours.append(text)
     _print_color(text_colours)
+
 
 def print_colourbar():
     color_range = torch.linspace(-2.5, 2.5, 20)
