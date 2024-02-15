@@ -13,3 +13,5 @@ lecture/
 .DS_Store
 .vscode/
 *.pyc
+
+venv/
